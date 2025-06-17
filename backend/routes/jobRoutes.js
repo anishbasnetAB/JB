@@ -1,15 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware, authorizeRoles } = require('../middleware/auth');
+const jobController = require('../controllers/jobController');
 
-// Example: Only employers can post jobs
-router.post('/post', authMiddleware, authorizeRoles('employer'), (req, res) => {
-  res.status(200).json({ message: 'Job posted successfully' });
-});
-
-// Example: Only jobseekers can apply
-router.post('/apply', authMiddleware, authorizeRoles('jobseeker'), (req, res) => {
-  res.status(200).json({ message: 'Applied to job successfully' });
-});
+router.post('/', authMiddleware, authorizeRoles('employer'), jobController.createJob);
+router.get('/my-jobs', authMiddleware, authorizeRoles('employer'), jobController.getMyJobs);
+router.put('/:id', authMiddleware, authorizeRoles('employer'), jobController.updateJob);
+router.delete('/:id', authMiddleware, authorizeRoles('employer'), jobController.deleteJob);
+router.patch('/:id/stop', authMiddleware, authorizeRoles('employer'), jobController.stopApplications);
 
 module.exports = router;

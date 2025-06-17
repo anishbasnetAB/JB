@@ -11,6 +11,7 @@ import JobseekerDashboard from './pages/Jobseeker/Dashboard';
 import ProtectedRoute from './utils/ProtectedRoute';
 import ForgotPassword from './pages/ForgetPassword';
 import ResetPassword from './pages/ResetPassword';
+import PostJob from './pages/Employer/PostJob';
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-
+        
         <Route
           path="/employer/dashboard"
           element={
@@ -40,6 +41,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/employer/post-job" element={
+  <ProtectedRoute>
+    <PostJob />
+  </ProtectedRoute>
+} />
       </Routes>
     </ThemeProvider>
   );
