@@ -12,7 +12,7 @@ import {
   CircularProgress,
   Box
 } from '@mui/material';
-import { Edit, Delete, Block } from '@mui/icons-material';
+import { Edit, Delete, Block, Group } from '@mui/icons-material';
 import axios from '../../api/axios';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
@@ -99,6 +99,12 @@ function MyJobs() {
                   <TableCell>{job.location || '-'}</TableCell>
                   <TableCell>{job.isActive ? 'Active' : 'Closed'}</TableCell>
                   <TableCell>
+                    <IconButton
+  onClick={() => navigate(`/employer/applicants/${job._id}`)}
+  title="View Applicants"
+>
+  <Group />
+</IconButton>
                     <IconButton
                       onClick={() => handleStop(job._id)}
                       disabled={!job.isActive}
