@@ -47,9 +47,9 @@ const Navbar = () => {
     }
     if (user.userType === 'employer') {
       return [
-        { text: 'Post Job', to: '/post-job' },
-        { text: 'My Jobs', to: '/my-jobs' },
-        { text: 'View Candidates', to: '/candidates' },
+        { text: 'Post Job', to: '/employer/post-job' },
+        { text: 'My Jobs', to: '/employer/my-jobs' },
+        { text: 'View Candidates', to: '/employer/candidates' },
         { text: 'Post Blog', to: '/post-blog' }
       ];
     }

@@ -12,6 +12,8 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import ForgotPassword from './pages/ForgetPassword';
 import ResetPassword from './pages/ResetPassword';
 import PostJob from './pages/Employer/PostJob';
+import MyJobs from './pages/Employer/MyJobs';
+import EditJob from './pages/Employer/EditJob';
 
 function App() {
   return (
@@ -33,6 +35,20 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/employer/my-jobs" element={
+  <ProtectedRoute>
+    <MyJobs />
+  </ProtectedRoute>
+} />
+
+
+<Route path="/employer/edit-job/:id" element={
+  <ProtectedRoute>
+    <EditJob />
+  </ProtectedRoute>
+} />
+
+
         <Route
           path="/dashboard"
           element={
