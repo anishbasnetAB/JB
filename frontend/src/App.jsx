@@ -15,6 +15,8 @@ import PostJob from './pages/Employer/PostJob';
 import MyJobs from './pages/Employer/MyJobs';
 import EditJob from './pages/Employer/EditJob';
 import ViewApplicants from './pages/Employer/ViewApplicants';
+import ApplyJob from './pages/Jobseeker/ApplyJob';
+import JobList from './pages/Jobseeker/JobList';
 
 function App() {
   return (
@@ -39,6 +41,21 @@ function App() {
         <Route path="/employer/my-jobs" element={
   <ProtectedRoute>
     <MyJobs />
+  </ProtectedRoute>
+} />
+
+<Route
+  path="/apply/:jobId"
+  element={
+    <ProtectedRoute>
+      <ApplyJob />
+    </ProtectedRoute>
+  }
+/>
+
+<Route path="/jobs" element={
+  <ProtectedRoute>
+    <JobList />
   </ProtectedRoute>
 } />
 

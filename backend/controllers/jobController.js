@@ -65,3 +65,24 @@ exports.stopApplications = async (req, res) => {
     res.status(500).json({ message: 'Failed to stop applications' });
   }
 };
+
+exports.getAllActiveJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find({ isActive: true });
+    res.status(200).json(jobs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch jobs' });
+  }
+};
+
+exports.getJobById = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.jobId);
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+    res.status(200).json(job);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch job' });
+  }
+};

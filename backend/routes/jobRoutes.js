@@ -8,5 +8,7 @@ router.get('/my-jobs', authMiddleware, authorizeRoles('employer'), jobController
 router.put('/:id', authMiddleware, authorizeRoles('employer'), jobController.updateJob);
 router.delete('/:id', authMiddleware, authorizeRoles('employer'), jobController.deleteJob);
 router.patch('/:id/stop', authMiddleware, authorizeRoles('employer'), jobController.stopApplications);
+router.get('/', jobController.getAllActiveJobs);
+router.get('/:jobId', jobController.getJobById);
 
 module.exports = router;
