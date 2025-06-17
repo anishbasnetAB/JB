@@ -16,6 +16,7 @@ import MyJobs from './pages/Employer/MyJobs';
 import EditJob from './pages/Employer/EditJob';
 import ViewApplicants from './pages/Employer/ViewApplicants';
 import ApplyJob from './pages/Jobseeker/ApplyJob';
+import JobDetail from './pages/Jobseeker/JobDetail';
 import JobList from './pages/Jobseeker/JobList';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
   }
 />
 
+<Route path="/jobs/:jobId" element={<JobDetail />} />
 <Route path="/jobs" element={
   <ProtectedRoute>
     <JobList />
