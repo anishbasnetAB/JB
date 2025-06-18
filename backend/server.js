@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+dotenv.config();
 const cors = require('cors');
 const path = require('path');
 const jobRoutes = require('./routes/jobRoutes');
@@ -8,7 +9,9 @@ const jobSeekerRoutes = require('./routes/jobSeekerRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const authRoutes = require('./routes/authRoutes');
 const blogRoutes = require('./routes/blogRoutes');
-dotenv.config();
+const employerRoutes = require('./routes/employerRoutes')
+
+
 
 const app = express();
 
@@ -18,11 +21,13 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/jobseeker', jobSeekerRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/employer', employerRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK' });
 });

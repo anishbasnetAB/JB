@@ -49,8 +49,7 @@ const Navbar = () => {
       return [
         { text: 'Post Job', to: '/employer/post-job' },
         { text: 'My Jobs', to: '/employer/my-jobs' },
-        { text: 'View Candidates', to: '/employer/candidates' },
-        { text: 'Post Blog', to: '/post-blog' }
+        { text: 'Post Blog', to: '/blogs' }
       ];
     }
     return [];
@@ -113,7 +112,7 @@ const Navbar = () => {
                 <ListItemText primary={item.text} />
               </ListItem>
             ))}
-            {user?.userType === 'jobseeker' && (
+            {user && (
               <ListItem button component={Link} to="/profile">
                 <ListItemText primary="Edit Profile" />
               </ListItem>
@@ -134,7 +133,7 @@ const Navbar = () => {
         onClose={handleMenuClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        {user?.userType === 'jobseeker' && (
+        {user && (
           <MenuItem component={Link} to="/profile" onClick={handleMenuClose}>
             Edit Profile
           </MenuItem>

@@ -7,7 +7,6 @@ import Signup from './Pages/Signup';
 import Login from './pages/Login';
 import VerifyEmail from './pages/VerifyEmail';
 import EmployerDashboard from './pages/Employer/Dashboard';
-import JobseekerDashboard from './pages/Jobseeker/Dashboard';
 import ProtectedRoute from './utils/ProtectedRoute';
 import ForgotPassword from './pages/ForgetPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -23,8 +22,12 @@ import MyApplications from './pages/Jobseeker/MyApplications';
 import BlogList from './pages/Blog/BlogList';
 import BlogDetail from './pages/Blog/BlogDetail';
 import CreateBlog from './pages/Blog/CreateBlog';
+import Profile from './pages/Profile';
+import { useAuth } from './context/AuthContext';
 
 function App() {
+  const { user } = useAuth();
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -35,7 +38,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        
+
         <Route
           path="/employer/dashboard"
           element={
@@ -44,65 +47,91 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/employer/my-jobs" element={
-  <ProtectedRoute>
-    <MyJobs />
-  </ProtectedRoute>
-} />
+        <Route
+          path="/employer/my-jobs"
+          element={
+            <ProtectedRoute>
+              <MyJobs />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/apply/:jobId"
-  element={
-    <ProtectedRoute>
-      <ApplyJob />
-    </ProtectedRoute>
-  }
-/>
-
-<Route path="/jobs/:jobId" element={<JobDetail />} />
-<Route path="/jobs" element={
-  <ProtectedRoute>
-    <JobList />
-  </ProtectedRoute>
-} />
-<Route path="/saved-jobs" element={
-  <ProtectedRoute>
-    <SavedJobs />
-  </ProtectedRoute>
-} />
-
- 
-        <Route path="/applications" element={<MyApplications />} />
-      
-
-<Route path="/employer/applicants/:jobId" element={
-  <ProtectedRoute>
-    <ViewApplicants />
-  </ProtectedRoute>
-} />
-
-<Route path="/employer/edit-job/:id" element={
-  <ProtectedRoute>
-    <EditJob />
-  </ProtectedRoute>
-} />
-
-<Route path="/blogs" element={<BlogList />} />
-<Route path="/blogs/:blogId" element={<BlogDetail />} />
-<Route path="/blogs/create" element={<CreateBlog />} />
+        <Route
+          path="/apply/:jobId"
+          element={
+            <ProtectedRoute>
+              <ApplyJob />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/jobs/:jobId" element={<JobDetail />} />
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute>
+              <JobList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/saved-jobs"
+          element={
+            <ProtectedRoute>
+              <SavedJobs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <MyApplications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/employer/applicants/:jobId"
+          element={
+            <ProtectedRoute>
+              <ViewApplicants />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/employer/edit-job/:id"
+          element={
+            <ProtectedRoute>
+              <EditJob />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/blogs" element={<BlogList />} />
+        <Route path="/blogs/:blogId" element={<BlogDetail />} />
+        <Route path="/blogs/create" element={<CreateBlog />} />
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <JobseekerDashboard />
+              {user?.userType === 'employer' ? <EmployerDashboard /> : <JobList />}
             </ProtectedRoute>
           }
         />
-        <Route path="/employer/post-job" element={
-  <ProtectedRoute>
-    <PostJob />
-  </ProtectedRoute>
-} />
+        <Route
+          path="/employer/post-job"
+          element={
+            <ProtectedRoute>
+              <PostJob />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </ThemeProvider>
   );
