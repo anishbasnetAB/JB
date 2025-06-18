@@ -7,7 +7,7 @@ const jobRoutes = require('./routes/jobRoutes');
 const jobSeekerRoutes = require('./routes/jobSeekerRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const authRoutes = require('./routes/authRoutes');
-
+const blogRoutes = require('./routes/blogRoutes');
 dotenv.config();
 
 const app = express();
@@ -22,7 +22,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/jobseeker', jobSeekerRoutes);
-
+app.use('/api/blogs', blogRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK' });
 });

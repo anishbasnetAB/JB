@@ -20,6 +20,9 @@ import JobDetail from './pages/Jobseeker/JobDetail';
 import JobList from './pages/Jobseeker/JobList';
 import SavedJobs from './pages/Jobseeker/SavedJobs';
 import MyApplications from './pages/Jobseeker/MyApplications';
+import BlogList from './pages/Blog/BlogList';
+import BlogDetail from './pages/Blog/BlogDetail';
+import CreateBlog from './pages/Blog/CreateBlog';
 
 function App() {
   return (
@@ -84,7 +87,9 @@ function App() {
   </ProtectedRoute>
 } />
 
-
+<Route path="/blogs" element={<BlogList />} />
+<Route path="/blogs/:blogId" element={<BlogDetail />} />
+<Route path="/blogs/create" element={<CreateBlog />} />
         <Route
           path="/dashboard"
           element={
