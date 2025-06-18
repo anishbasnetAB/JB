@@ -40,6 +40,7 @@ const Navbar = () => {
     }
     if (user.userType === 'jobseeker') {
       return [
+        { text: 'Jobs', to: '/jobs' },
         { text: 'My Applications', to: '/applications' },
         { text: 'Saved Jobs', to: '/saved-jobs' },
         { text: 'Blogs', to: '/blogs' }
@@ -47,9 +48,11 @@ const Navbar = () => {
     }
     if (user.userType === 'employer') {
       return [
+        { text: 'Dashboard', to: '/dashboard' },
         { text: 'Post Job', to: '/employer/post-job' },
         { text: 'My Jobs', to: '/employer/my-jobs' },
-        { text: 'Post Blog', to: '/blogs' }
+        { text: 'Create Blog', to: '/blogs/create' },
+        { text: 'Blogs', to: '/blogs' }
       ];
     }
     return [];
