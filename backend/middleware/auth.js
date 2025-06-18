@@ -11,7 +11,8 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // contains userId and userType
+    console.log('✅ Decoded token:', decoded);
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });
@@ -20,6 +21,7 @@ const authMiddleware = (req, res, next) => {
 
 const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
+    console.log('🔍 authorizeRoles check:', req.user.userType, 'allowed:', allowedRoles);
     if (!allowedRoles.includes(req.user.userType)) {
       return res.status(403).json({ message: 'Access denied: insufficient role' });
     }

@@ -7,7 +7,9 @@ const applicationSchema = new mongoose.Schema({
   experience: String,
   cv: String,
   status: { type: String, enum: ['applied', 'shortlisted', 'rejected'], default: 'applied' },
-  note: { type: String, default: '' }
+  note: { type: String, default: '' },
+  
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Application', applicationSchema);

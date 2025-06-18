@@ -2,8 +2,15 @@ const express = require('express');
 const router = express.Router();
 const { authMiddleware, authorizeRoles } = require('../middleware/auth');
 const upload = require('../utils/upload');
-const { applyToJob, getApplicantsByJob } = require('../controllers/applicationController');
 const applicationController = require('../controllers/applicationController');
+
+// Jobseeker views their own applications (✅ placed above dynamic routes!)
+router.get(
+  '/my',
+  authMiddleware,
+  authorizeRoles('jobseeker'),
+  applicationController.getMyApplications
+);
 
 // Jobseeker applies to a job
 router.post(
@@ -11,7 +18,7 @@ router.post(
   authMiddleware,
   authorizeRoles('jobseeker'),
   upload.single('cv'),
-  applyToJob
+  applicationController.applyToJob
 );
 
 // Employer views applicants for a job
@@ -19,9 +26,10 @@ router.get(
   '/:jobId',
   authMiddleware,
   authorizeRoles('employer'),
-  getApplicantsByJob
+  applicationController.getApplicantsByJob
 );
 
+// Employer updates applicant status
 router.patch(
   '/status/:appId',
   authMiddleware,
@@ -29,10 +37,12 @@ router.patch(
   applicationController.updateStatus
 );
 
+// Employer updates applicant note
 router.patch(
   '/note/:appId',
   authMiddleware,
   authorizeRoles('employer'),
   applicationController.updateNote
 );
+
 module.exports = router;

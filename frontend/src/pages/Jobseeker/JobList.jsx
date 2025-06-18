@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import axios from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import { saveJob } from '../../api/jobSeeker';
 
 function JobList() {
   const [jobs, setJobs] = useState([]);
@@ -21,6 +23,7 @@ function JobList() {
   const [titleSearch, setTitleSearch] = useState('');
   const [locationSearch, setLocationSearch] = useState('');
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     fetchJobs();
@@ -34,6 +37,7 @@ function JobList() {
       setFiltered(activeJobs);
     } catch (err) {
       console.error(err);
+      enqueueSnackbar('Failed to load jobs', { variant: 'error' });
     }
   };
 
@@ -54,6 +58,16 @@ function JobList() {
 
     setFiltered(data);
   }, [titleSearch, locationSearch, jobs]);
+
+  const handleSaveJob = async (jobId) => {
+    try {
+      await saveJob(jobId);
+      enqueueSnackbar('Job saved successfully!', { variant: 'success' });
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Failed to save job';
+      enqueueSnackbar(msg, { variant: 'error' });
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -100,7 +114,7 @@ function JobList() {
 
                   <Box mt={1} mb={1}>
                     <Chip label={job.pay} color="success" size="small" sx={{ mr: 1 }} />
-                    <Chip label={job.contractType} size="small" />
+                    {job.contractType && <Chip label={job.contractType} size="small" />}
                   </Box>
 
                   <Typography variant="body2" color="text.secondary" noWrap>
@@ -114,6 +128,13 @@ function JobList() {
                     onClick={() => navigate(`/jobs/${job._id}`)}
                   >
                     View Details
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => handleSaveJob(job._id)}
+                  >
+                    Save Job
                   </Button>
                 </CardActions>
               </Card>

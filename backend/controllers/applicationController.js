@@ -100,3 +100,14 @@ exports.updateNote = async (req, res) => {
     res.status(500).json({ message: 'Failed to update note' });
   }
 };
+
+exports.getMyApplications = async (req, res) => {
+  try {
+    const apps = await Application.find({ applicant: req.user.userId })
+      .populate('job');
+    res.status(200).json(apps);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch applications' });
+  }
+};

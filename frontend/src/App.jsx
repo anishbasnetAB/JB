@@ -18,6 +18,8 @@ import ViewApplicants from './pages/Employer/ViewApplicants';
 import ApplyJob from './pages/Jobseeker/ApplyJob';
 import JobDetail from './pages/Jobseeker/JobDetail';
 import JobList from './pages/Jobseeker/JobList';
+import SavedJobs from './pages/Jobseeker/SavedJobs';
+import MyApplications from './pages/Jobseeker/MyApplications';
 
 function App() {
   return (
@@ -60,6 +62,15 @@ function App() {
     <JobList />
   </ProtectedRoute>
 } />
+<Route path="/saved-jobs" element={
+  <ProtectedRoute>
+    <SavedJobs />
+  </ProtectedRoute>
+} />
+
+ 
+        <Route path="/applications" element={<MyApplications />} />
+      
 
 <Route path="/employer/applicants/:jobId" element={
   <ProtectedRoute>
