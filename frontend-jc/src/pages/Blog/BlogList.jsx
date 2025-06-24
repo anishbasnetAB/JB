@@ -30,28 +30,39 @@ const BlogList = () => {
           {blogs.map(blog => (
             <div 
               key={blog._id} 
-              className="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden flex flex-col p-4"
+              className="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden flex flex-col"
             >
-              <h2 className="text-lg font-semibold mb-1">{blog.title}</h2>
-              <p className="text-xs text-gray-500 mb-2">By {blog.employer?.name || 'Unknown'}</p>
+              {/* Display image if available */}
+              {blog.images && blog.images.length > 0 && (
+                <img
+                  src={`http://localhost:5000/uploads/${blog.images[0]}`}
+                  alt="Blog"
+                  className="w-full h-48 object-cover"
+                />
+              )}
 
-              <div className="text-sm text-gray-700 text-justify space-y-2">
-                {blog.content && blog.content.length > 0 ? (
-                  <>
-                    <p>{getSentence(blog.content.join(' '), 1)}</p>
-                    <p>{getSentence(blog.content.join(' '), 2)}</p>
-                  </>
-                ) : (
-                  <p>No description available.</p>
-                )}
+              <div className="p-4 flex flex-col flex-grow">
+                <h2 className="text-lg font-semibold mb-1">{blog.title}</h2>
+                <p className="text-xs text-gray-500 mb-2">By {blog.employer?.name || 'Unknown'}</p>
+
+                <div className="text-sm text-gray-700 text-justify space-y-2 flex-grow">
+                  {blog.content && blog.content.length > 0 ? (
+                    <>
+                      <p>{getSentence(blog.content.join(' '), 1)}</p>
+                      <p>{getSentence(blog.content.join(' '), 2)}</p>
+                    </>
+                  ) : (
+                    <p>No description available.</p>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => navigate(`/blogs/${blog._id}`)}
+                  className="mt-3 bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600 self-start"
+                >
+                  View Blog
+                </button>
               </div>
-
-              <button
-                onClick={() => navigate(`/blogs/${blog._id}`)}
-                className="mt-3 bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600 self-start"
-              >
-                View Blog
-              </button>
             </div>
           ))}
         </div>

@@ -7,18 +7,18 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
+    setMobileNavOpen(false);
     navigate('/login');
   };
 
   const navLinks = () => {
     if (!user) {
-      return [
-        { text: 'Register', to: '/signup' }
-      ];
+      return [{ text: 'Register', to: '/signup' }];
     }
     if (user.userType === 'jobseeker') {
       return [
@@ -95,7 +95,59 @@ const Navbar = () => {
             </div>
           )}
         </div>
+
+        {/* Mobile Hamburger */}
+        <div className="md:hidden flex items-center">
+          <button
+            onClick={() => setMobileNavOpen(!mobileNavOpen)}
+            className="text-black focus:outline-none"
+          >
+            ☰
+          </button>
+        </div>
       </div>
+
+      {/* Mobile menu links */}
+      {mobileNavOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 space-y-1 py-2">
+          {navLinks().map((item) => (
+            <Link
+              key={item.text}
+              to={item.to}
+              onClick={() => setMobileNavOpen(false)}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              {item.text}
+            </Link>
+          ))}
+          {!user && (
+            <Link
+              to="/login"
+              onClick={() => setMobileNavOpen(false)}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Sign In
+            </Link>
+          )}
+          {user && (
+            <>
+              <Link
+                to="/profile"
+                onClick={() => setMobileNavOpen(false)}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Edit Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
+      )}
     </nav>
   );
 };
