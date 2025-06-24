@@ -71,7 +71,6 @@ function ViewApplicants() {
       await axios.patch(`/applications/status/${appId}`, { status }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert('Status updated');
       fetchApplicants();
     } catch (err) {
       console.error(err);
@@ -84,7 +83,6 @@ function ViewApplicants() {
       await axios.patch(`/applications/note/${appId}`, { note }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert('Note saved');
     } catch (err) {
       console.error(err);
       alert('Failed to save note');
@@ -93,20 +91,20 @@ function ViewApplicants() {
 
   return (
     <div className="max-w-7xl mx-auto mt-10 bg-white shadow rounded p-6">
-      <h1 className="text-2xl font-bold text-center mb-4">Applicants</h1>
+      <h1 className="text-2xl font-bold text-center mb-6">Applicants</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <input
           type="text"
           value={filterRole}
           onChange={(e) => setFilterRole(e.target.value)}
           placeholder="Filter by Role"
-          className="border border-gray-300 rounded p-2 text-sm w-full"
+          className="border border-gray-300 rounded-md p-2 text-sm w-full focus:ring-2 focus:ring-blue-200"
         />
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="border border-gray-300 rounded p-2 text-sm w-full"
+          className="border border-gray-300 rounded-md p-2 text-sm w-full focus:ring-2 focus:ring-blue-200"
         >
           <option value="">All Status</option>
           <option value="applied">Applied</option>
@@ -116,7 +114,7 @@ function ViewApplicants() {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="border border-gray-300 rounded p-2 text-sm w-full"
+          className="border border-gray-300 rounded-md p-2 text-sm w-full focus:ring-2 focus:ring-blue-200"
         >
           <option value="experience">Sort by Experience</option>
           <option value="name">Sort by Name</option>
@@ -132,24 +130,32 @@ function ViewApplicants() {
       ) : filtered.length === 0 ? (
         <p className="text-center text-gray-600">No applicants match the criteria.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm border border-gray-200">
-            <thead className="bg-gray-100">
+        <div className="overflow-x-auto rounded border border-gray-200 shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead className="bg-gray-50 text-gray-700 uppercase text-xs">
               <tr>
                 {['Name', 'Email', 'Role', 'Experience', 'Status', 'CV', 'Date Applied', 'Actions'].map((head) => (
-                  <th key={head} className="p-2 border-b font-semibold text-left">{head}</th>
+                  <th key={head} className="p-3 text-left tracking-wider">{head}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map((app) => (
-                <tr key={app._id} className="hover:bg-gray-50">
-                  <td className="p-2 border-b">{app.applicant?.name}</td>
-                  <td className="p-2 border-b">{app.applicant?.email}</td>
-                  <td className="p-2 border-b">{app.role}</td>
-                  <td className="p-2 border-b">{app.experience}</td>
-                  <td className="p-2 border-b">{app.status}</td>
-                  <td className="p-2 border-b">
+                <tr key={app._id} className="hover:bg-gray-50 border-b">
+                  <td className="p-3">{app.applicant?.name || '-'}</td>
+                  <td className="p-3">{app.applicant?.email || '-'}</td>
+                  <td className="p-3">{app.role || '-'}</td>
+                  <td className="p-3">{app.experience || '-'}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      app.status === 'shortlisted' ? 'bg-green-100 text-green-700' :
+                      app.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {app.status}
+                    </span>
+                  </td>
+                  <td className="p-3">
                     {app.cv ? (
                       <a
                         href={`http://localhost:5000/uploads/${app.cv}`}
@@ -163,29 +169,37 @@ function ViewApplicants() {
                       'No CV'
                     )}
                   </td>
-                  <td className="p-2 border-b">{new Date(app.createdAt).toLocaleDateString()}</td>
-                  <td className="p-2 border-b">
-                    <div className="space-y-1">
+                  <td className="p-3">{new Date(app.createdAt).toLocaleDateString()}</td>
+                  <td className="p-3 space-y-1">
+                    <div className="flex gap-1">
                       <button
                         onClick={() => updateStatus(app._id, 'shortlisted')}
-                        className={`w-full text-xs rounded py-1 ${app.status === 'shortlisted' ? 'bg-blue-500 text-white' : 'border border-blue-500 text-blue-500 hover:bg-blue-100'}`}
+                        className={`px-2 py-1 text-xs rounded ${
+                          app.status === 'shortlisted'
+                            ? 'bg-blue-500 text-white'
+                            : 'border border-blue-500 text-blue-500 hover:bg-blue-50'
+                        }`}
                       >
                         Shortlist
                       </button>
                       <button
                         onClick={() => updateStatus(app._id, 'rejected')}
-                        className={`w-full text-xs rounded py-1 ${app.status === 'rejected' ? 'bg-red-500 text-white' : 'border border-red-500 text-red-500 hover:bg-red-100'}`}
+                        className={`px-2 py-1 text-xs rounded ${
+                          app.status === 'rejected'
+                            ? 'bg-red-500 text-white'
+                            : 'border border-red-500 text-red-500 hover:bg-red-50'
+                        }`}
                       >
                         Reject
                       </button>
-                      <input
-                        type="text"
-                        defaultValue={app.note}
-                        placeholder="Add note"
-                        onBlur={(e) => updateNote(app._id, e.target.value)}
-                        className="w-full border border-gray-300 rounded p-1 text-xs"
-                      />
                     </div>
+                    <input
+                      type="text"
+                      defaultValue={app.note}
+                      placeholder="Add note"
+                      onBlur={(e) => updateNote(app._id, e.target.value)}
+                      className="w-full border border-gray-300 rounded p-1 text-xs focus:ring-1 focus:ring-blue-200"
+                    />
                   </td>
                 </tr>
               ))}
