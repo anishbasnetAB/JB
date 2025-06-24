@@ -1,28 +1,4 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Container,
-  Paper,
-  Typography,
-  Grid,
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-  InputLabel,
-  InputAdornment,
-  IconButton,
-  CircularProgress,
-} from '@mui/material';
-import {
-  AccountCircle,
-  Email as EmailIcon,
-  Visibility,
-  VisibilityOff,
-  Lock as LockIcon,
-  Description as FileIcon,
-} from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -59,239 +35,211 @@ function Signup() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-const onSubmit = async (data) => {
-  try {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key !== 'confirm') formData.append(key, value);
-    });
-    if (data.companyCard?.[0]) {
-      formData.append('companyCard', data.companyCard[0]);
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key !== 'confirm') formData.append(key, value);
+      });
+      if (data.companyCard?.[0]) {
+        formData.append('companyCard', data.companyCard[0]);
+      }
+
+      const res = await axios.post('/auth/signup', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (res.status === 201) {
+        enqueueSnackbar(res.data?.message || 'Signup successful!', { variant: 'success' });
+        setTimeout(() => navigate('/login'), 1000);
+      } else {
+        enqueueSnackbar(res.data?.message || 'Signup failed', { variant: 'error' });
+      }
+    } catch (err) {
+      console.error('Signup Error:', err);
+      const msg =
+        err?.response?.data?.message ||
+        (err.request ? 'Network Error: Could not reach server.' : 'Unexpected error');
+      enqueueSnackbar(msg, { variant: 'error' });
     }
-
-    const res = await axios.post('/auth/signup', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-
-    // if we're here, the request went through
-    if (res.status === 201) {
-      enqueueSnackbar(res.data?.message || 'Signup successful!', { variant: 'success' });
-        setTimeout(() => {
-    navigate('/login');
-  }, 1000);
-    } else {
-      enqueueSnackbar(res.data?.message || 'Signup failed', { variant: 'error' });
-    }
-  } catch (err) {
-    console.error('Signup Error:', err); // ✅ log for dev visibility
-
-    const msg = err?.response?.data?.message
-      || (err.request ? 'Network Error: Could not reach server.' : 'Unexpected error');
-
-    enqueueSnackbar(msg, { variant: 'error' });
-  }
-};
-
+  };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Register New User
-        </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Controller
-                name="name"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    label="Full Name"
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
-                    fullWidth
-                    {...field}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Controller
-                name="age"
-                control={control}
-                render={({ field }) => (
-                  <TextField label="Age" error={!!errors.age} helperText={errors.age?.message} fullWidth {...field} />
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Controller
-                name="country"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    label="Country"
-                    error={!!errors.country}
-                    helperText={errors.country?.message}
-                    fullWidth
-                    {...field}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name="email"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    label="Email"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <EmailIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                    fullWidth
-                    {...field}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <LockIcon />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    fullWidth
-                    {...field}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Controller
-                name="confirm"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    label="Confirm Password"
-                    type={showConfirm ? 'text' : 'password'}
-                    error={!!errors.confirm}
-                    helperText={errors.confirm?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <LockIcon />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => setShowConfirm((prev) => !prev)} edge="end">
-                            {showConfirm ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    fullWidth
-                    {...field}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputLabel sx={{ mb: 1 }}>Registering as</InputLabel>
-              <Controller
-                name="userType"
-                control={control}
-                render={({ field }) => (
-                  <RadioGroup row {...field}>
-                    <FormControlLabel value="jobseeker" control={<Radio />} label="Job Seeker" />
-                    <FormControlLabel value="employer" control={<Radio />} label="Employer" />
-                  </RadioGroup>
-                )}
-              />
-              {errors.userType && (
-                <Typography variant="caption" color="error">
-                  {errors.userType.message}
-                </Typography>
-              )}
-            </Grid>
-            {userType === 'employer' && (
-              <Grid item xs={12}>
-                <Controller
-                  name="companyCard"
-                  control={control}
-                  rules={{ required: 'Company card image is required' }}
-                  render={({ field }) => (
-                    <>
-                      <Button component="label" variant="outlined" fullWidth sx={{ height: 56 }}>
-                        <FileIcon sx={{ mr: 1 }} />
-                        {fileName || 'Upload Company ID (JPEG/PNG)'}
-                        <input
-                          hidden
-                          accept="image/jpeg,image/png"
-                          type="file"
-                          onChange={(e) => {
-                            field.onChange(e.target.files);
-                            setFileName(e.target.files?.[0]?.name || '');
-                          }}
-                        />
-                      </Button>
-                      {errors.companyCard && (
-                        <Typography variant="caption" color="error">
-                          {errors.companyCard.message}
-                        </Typography>
-                      )}
-                    </>
-                  )}
-                />
-              </Grid>
-            )}
-            <Grid item xs={12}>
-              <Button
-                type="submit"
-                fullWidth
-                disabled={isSubmitting}
-                startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
+    <div className="max-w-md mx-auto mt-12 mb-6 p-6 bg-white rounded-lg shadow-sm">
+      <h2 className="text-2xl font-bold text-center mb-4">Join JobConnect</h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Controller
+          name="userType"
+          control={control}
+          render={({ field }) => (
+            <div className="flex bg-gray-100 rounded-md overflow-hidden">
+              <button
+                type="button"
+                onClick={() => field.onChange('jobseeker')}
+                className={`w-1/2 py-2 text-sm font-medium ${
+                  field.value === 'jobseeker' ? 'bg-white shadow-inner' : 'text-gray-500'
+                }`}
               >
-                {isSubmitting ? 'Submitting…' : 'Create Account'}
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
-    </Container>
+                Jobseeker
+              </button>
+              <button
+                type="button"
+                onClick={() => field.onChange('employer')}
+                className={`w-1/2 py-2 text-sm font-medium ${
+                  field.value === 'employer' ? 'bg-white shadow-inner' : 'text-gray-500'
+                }`}
+              >
+                Employer
+              </button>
+            </div>
+          )}
+        />
+        {errors.userType && <p className="text-xs text-red-500">{errors.userType.message}</p>}
+
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              placeholder="Enter your full name"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          )}
+        />
+        {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+
+        <Controller
+          name="country"
+          control={control}
+          render={({ field }) => (
+            <select
+              {...field}
+              className="w-full border rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+            >
+              <option value="">Select your country</option>
+              <option value="Nepal">Nepal</option>
+              <option value="India">India</option>
+              <option value="USA">USA</option>
+              {/* Add more countries */}
+            </select>
+          )}
+        />
+        {errors.country && <p className="text-xs text-red-500">{errors.country.message}</p>}
+
+        <Controller
+          name="age"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              placeholder="Enter your age"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          )}
+        />
+        {errors.age && <p className="text-xs text-red-500">{errors.age.message}</p>}
+
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              placeholder="Enter your email"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          )}
+        />
+        {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Create a password"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          )}
+        />
+        <button
+          type="button"
+          className="text-xs text-blue-500 -mt-2 mb-2"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? 'Hide' : 'Show'} Password
+        </button>
+        {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+
+        <Controller
+          name="confirm"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type={showConfirm ? 'text' : 'password'}
+              placeholder="Confirm your password"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          )}
+        />
+        <button
+          type="button"
+          className="text-xs text-blue-500 -mt-2 mb-2"
+          onClick={() => setShowConfirm(!showConfirm)}
+        >
+          {showConfirm ? 'Hide' : 'Show'} Confirm Password
+        </button>
+        {errors.confirm && <p className="text-xs text-red-500">{errors.confirm.message}</p>}
+
+        {userType === 'employer' && (
+          <>
+            <Controller
+              name="companyCard"
+              control={control}
+              rules={{ required: 'Company card image is required' }}
+              render={({ field }) => (
+                <label className="w-full flex items-center justify-center border rounded-md py-2 cursor-pointer bg-gray-50">
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/jpeg,image/png"
+                    onChange={(e) => {
+                      field.onChange(e.target.files);
+                      setFileName(e.target.files?.[0]?.name || '');
+                    }}
+                  />
+                  {fileName || 'Upload Company ID (JPEG/PNG)'}
+                </label>
+              )}
+            />
+            {errors.companyCard && <p className="text-xs text-red-500">{errors.companyCard.message}</p>}
+          </>
+        )}
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-blue-100 text-black rounded-md py-2 font-medium hover:bg-blue-200"
+        >
+          {isSubmitting ? 'Submitting…' : 'Sign Up'}
+        </button>
+
+        <p className="text-center text-sm text-gray-500">
+          Already have an account?{' '}
+          <span
+            className="text-blue-500 cursor-pointer"
+            onClick={() => navigate('/login')}
+          >
+            Sign in
+          </span>
+        </p>
+      </form>
+    </div>
   );
 }
 
