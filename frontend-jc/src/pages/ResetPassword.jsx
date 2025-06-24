@@ -7,17 +7,26 @@ function ResetPassword() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' }); 
+  // type: 'success' | 'error'
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessage({ text: '', type: '' });
     try {
       const res = await axios.post(`/auth/reset-password/${token}`, { newPassword: password });
-      alert(res.data.message);
-      navigate('/login');
+      setMessage({
+        text: res.data.message || 'Password reset successful!',
+        type: 'success',
+      });
+      setTimeout(() => navigate('/login'), 2000); // Delay to let user see message
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to reset password';
-      alert(msg);
+      setMessage({
+        text: msg,
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }
@@ -51,6 +60,18 @@ function ResetPassword() {
             'Reset Password'
           )}
         </button>
+
+        {message.text && (
+          <div
+            className={`text-center text-sm font-medium py-2 rounded ${
+              message.type === 'success'
+                ? 'bg-green-100 text-green-700'
+                : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
       </form>
     </div>
   );

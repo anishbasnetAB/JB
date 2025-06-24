@@ -4,16 +4,25 @@ import axios from '../api/axios';
 function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' }); 
+  // type: 'success' | 'error'
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessage({ text: '', type: '' });
     try {
       const res = await axios.post('/auth/forgot-password', { email });
-      alert(res.data.message || 'Reset link sent');
+      setMessage({
+        text: res.data.message || 'Reset link sent!',
+        type: 'success',
+      });
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to send reset link';
-      alert(msg);
+      setMessage({
+        text: msg,
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }
@@ -39,7 +48,9 @@ function ForgotPassword() {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
           {loading ? (
             <span className="flex justify-center items-center gap-2">
@@ -50,6 +61,18 @@ function ForgotPassword() {
             'Send Reset Link'
           )}
         </button>
+
+        {message.text && (
+          <div
+            className={`text-center text-sm font-medium py-2 rounded ${
+              message.type === 'success'
+                ? 'bg-green-100 text-green-700'
+                : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
       </form>
     </div>
   );
