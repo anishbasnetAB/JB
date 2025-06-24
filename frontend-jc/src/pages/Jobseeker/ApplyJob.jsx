@@ -10,7 +10,8 @@ function ApplyJob() {
   const [role, setRole] = useState('');
   const [experience, setExperience] = useState('');
   const [cv, setCv] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [banner, setBanner] = useState({ message: '', type: '' }); // type: 'success' | 'error'
 
   const fetchJob = async () => {
     try {
@@ -18,7 +19,9 @@ function ApplyJob() {
       setJob(res.data);
     } catch (err) {
       console.error(err);
-      alert('Failed to load job details');
+      setBanner({ message: 'Failed to load job details. Please try again later.', type: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -26,9 +29,17 @@ function ApplyJob() {
     fetchJob();
   }, [jobId]);
 
+  const showBannerAndNavigate = (message, type) => {
+    setBanner({ message, type });
+    setTimeout(() => {
+      navigate('/jobs');
+    }, 3000);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setBanner({ message: '', type: '' });
 
     try {
       const formData = new FormData();
@@ -43,19 +54,39 @@ function ApplyJob() {
         }
       });
 
-      alert('Application submitted successfully!');
-      navigate('/jobs');
+      showBannerAndNavigate('Application submitted successfully!', 'success');
     } catch (err) {
       console.error(err);
-      const msg = err.response?.data?.message || 'Failed to apply';
-      alert(msg);
+      const msg = err.response?.data?.message || 'Failed to apply. Please try again.';
+      showBannerAndNavigate(msg, 'error');
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading && !job) {
+    return (
+      <div className="max-w-lg mx-auto mt-10 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="text-sm text-gray-600 mt-2">Loading job details...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-lg mx-auto mt-10 bg-white shadow rounded p-6">
+    <div className="max-w-lg mx-auto mt-10 bg-white shadow rounded p-6 relative">
+      {banner.message && (
+        <div
+          className={`absolute top-0 left-0 right-0 p-2 text-sm text-center font-medium ${
+            banner.type === 'success'
+              ? 'bg-green-100 text-green-700'
+              : 'bg-red-100 text-red-700'
+          }`}
+        >
+          {banner.message}
+        </div>
+      )}
+
       {job ? (
         <>
           <h1 className="text-xl font-bold mb-2">Apply to {job.title}</h1>
@@ -99,7 +130,9 @@ function ApplyJob() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 ${
+                loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
               {loading ? (
                 <span className="flex justify-center items-center gap-2">
@@ -113,9 +146,9 @@ function ApplyJob() {
           </form>
         </>
       ) : (
-        <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
+        !banner.message && (
+          <p className="text-center text-red-500">Job not found</p>
+        )
       )}
     </div>
   );

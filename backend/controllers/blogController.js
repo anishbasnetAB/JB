@@ -3,13 +3,26 @@ const Blog = require('../models/Blog');
 exports.createBlog = async (req, res) => {
   try {
     const images = req.files.map(f => f.filename);
+
+    // Ensure content is an array (in case frontend sends it as string accidentally)
+    let content = req.body.content;
+    if (typeof content === 'string') {
+      content = JSON.parse(content);  // Handle stringified array
+    }
+
+    if (!Array.isArray(content) || content.length === 0) {
+      return res.status(400).json({ message: 'Content must be a non-empty array of paragraphs' });
+    }
+
     const blog = new Blog({
       employer: req.user.userId,
       title: req.body.title,
-      content: req.body.content,
+      content,
       images
     });
+
     await blog.save();
+
     res.status(201).json({ message: 'Blog created', blog });
   } catch (err) {
     console.error(err);

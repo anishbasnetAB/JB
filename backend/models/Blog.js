@@ -9,7 +9,7 @@ const commentSchema = new mongoose.Schema({
 const blogSchema = new mongoose.Schema({
   employer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   title: { type: String, required: true },
-  content: { type: String, required: true },
+  content: [{ type: String, required: true }],   // ✅ changed line
   images: [String],
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   comments: [commentSchema]

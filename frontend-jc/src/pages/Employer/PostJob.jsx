@@ -1,4 +1,5 @@
-import React from 'react';
+// components/PostJob.jsx
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -13,6 +14,8 @@ const schema = yup.object({
   skills: yup.string().nullable(),
   description: yup.string().nullable(),
   deadline: yup.date().nullable(),
+  responsibilities: yup.string().nullable(),
+  requirements: yup.string().nullable(),
 });
 
 function PostJob() {
@@ -20,12 +23,15 @@ function PostJob() {
     resolver: yupResolver(schema),
   });
   const navigate = useNavigate();
+  const [message, setMessage] = useState({ text: '', type: '' });
 
   const onSubmit = async (data) => {
     try {
       const payload = {
         ...data,
         skills: data.skills ? data.skills.split(',').map(s => s.trim()) : [],
+        responsibilities: data.responsibilities ? data.responsibilities.split('\n').map(r => r.trim()).filter(r => r) : [],
+        requirements: data.requirements ? data.requirements.split('\n').map(r => r.trim()).filter(r => r) : [],
       };
 
       const res = await axios.post('/jobs', payload, {
@@ -34,13 +40,13 @@ function PostJob() {
         }
       });
 
-      alert(res.data.message || 'Job posted successfully');
+      setMessage({ text: res.data.message || 'Job posted successfully', type: 'success' });
       reset();
-      navigate('/employer/my-jobs');
+      setTimeout(() => navigate('/employer/my-jobs'), 1500);
     } catch (err) {
       console.error(err);
       const msg = err?.response?.data?.message || 'Job post failed';
-      alert(msg);
+      setMessage({ text: msg, type: 'error' });
     }
   };
 
@@ -88,6 +94,36 @@ function PostJob() {
         </div>
 
         <div>
+          <label className="block text-sm font-medium mb-1">Responsibilities (one per line)</label>
+          <Controller
+            name="responsibilities"
+            control={control}
+            render={({ field }) => (
+              <textarea
+                rows={4}
+                {...field}
+                className="w-full border border-gray-300 rounded p-2 text-sm"
+              />
+            )}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Requirements (one per line)</label>
+          <Controller
+            name="requirements"
+            control={control}
+            render={({ field }) => (
+              <textarea
+                rows={4}
+                {...field}
+                className="w-full border border-gray-300 rounded p-2 text-sm"
+              />
+            )}
+          />
+        </div>
+
+        <div>
           <label className="block text-sm font-medium mb-1">Application Deadline</label>
           <Controller
             name="deadline"
@@ -109,6 +145,16 @@ function PostJob() {
         >
           {isSubmitting ? 'Posting...' : 'Post Job'}
         </button>
+
+        {message.text && (
+          <div
+            className={`mt-2 text-center text-sm font-medium py-2 rounded ${
+              message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
       </form>
     </div>
   );

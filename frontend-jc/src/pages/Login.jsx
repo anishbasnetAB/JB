@@ -19,6 +19,7 @@ function Login() {
   } = useForm({ resolver: yupResolver(schema) });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -31,16 +32,18 @@ function Login() {
       localStorage.setItem('user', JSON.stringify(user));
       login(user);
 
-      alert(res.data.message || 'Login successful');
+      setMessage({ text: res.data.message || 'Login successful', type: 'success' });
 
-      if (user?.role === 'employer') {
-        navigate('/employer/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
+      setTimeout(() => {
+        if (user?.role === 'employer') {
+          navigate('/employer/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
+      }, 1500);
     } catch (err) {
       const msg = err.response?.data?.message || 'Login failed';
-      alert(msg);
+      setMessage({ text: msg, type: 'error' });
     }
   };
 
@@ -110,6 +113,16 @@ function Login() {
             'Login'
           )}
         </button>
+
+        {message.text && (
+          <div
+            className={`mt-2 text-center text-sm font-medium py-2 rounded ${
+              message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
       </form>
     </div>
   );

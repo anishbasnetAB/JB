@@ -62,6 +62,28 @@ function JobDetail() {
 
       <p className="text-sm text-gray-700 mb-4">{job.description}</p>
 
+      {job.requirements && job.requirements.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-md font-semibold mb-1">Requirements</h3>
+          <ul className="list-disc list-inside text-sm text-gray-700">
+            {job.requirements.map((req, idx) => (
+              <li key={idx}>{req}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {job.responsibilities && job.responsibilities.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-md font-semibold mb-1">Responsibilities</h3>
+          <ul className="list-disc list-inside text-sm text-gray-700">
+            {job.responsibilities.map((resp, idx) => (
+              <li key={idx}>{resp}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <button
         onClick={() => navigate(`/apply/${job._id}`)}
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

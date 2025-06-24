@@ -32,7 +32,6 @@ function MyJobs() {
       await axios.delete(`/jobs/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert('Job deleted');
       fetchJobs();
     } catch (err) {
       console.error(err);
@@ -45,7 +44,6 @@ function MyJobs() {
       await axios.patch(`/jobs/${id}/stop`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert('Applications stopped');
       fetchJobs();
     } catch (err) {
       console.error(err);
@@ -54,67 +52,65 @@ function MyJobs() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 bg-white shadow rounded p-6">
-      <h1 className="text-2xl font-bold text-center mb-4">My Job Posts</h1>
+    <div className="max-w-4xl mx-auto mt-10 p-4">
+      <h1 className="text-3xl font-bold text-center mb-6">My Job Posts</h1>
 
       {loading ? (
         <div className="flex justify-center items-center min-h-[200px]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       ) : jobs.length === 0 ? (
-        <p className="text-center text-gray-600">No jobs posted yet.</p>
+        <p className="text-center text-gray-500">You have not posted any jobs yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-200 text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border-b p-2 text-left">Title</th>
-                <th className="border-b p-2 text-left">Location</th>
-                <th className="border-b p-2 text-left">Status</th>
-                <th className="border-b p-2 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobs.map((job) => (
-                <tr key={job._id} className="hover:bg-gray-50">
-                  <td className="border-b p-2">{job.title}</td>
-                  <td className="border-b p-2">{job.location || '-'}</td>
-                  <td className="border-b p-2">{job.isActive ? 'Active' : 'Closed'}</td>
-                  <td className="border-b p-2 flex flex-wrap gap-1">
-                    <button
-                      onClick={() => navigate(`/employer/applicants/${job._id}`)}
-                      className="text-blue-500 hover:underline"
-                      title="View Applicants"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => handleStop(job._id)}
-                      disabled={!job.isActive}
-                      className={`text-yellow-500 hover:underline ${!job.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      title="Stop Applications"
-                    >
-                      Stop
-                    </button>
-                    <button
-                      onClick={() => navigate(`/employer/edit-job/${job._id}`)}
-                      className="text-green-500 hover:underline"
-                      title="Edit Job"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(job._id)}
-                      className="text-red-500 hover:underline"
-                      title="Delete Job"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid gap-4">
+          {jobs.map((job) => (
+            <div key={job._id} className="border border-gray-200 rounded shadow-sm p-4 hover:shadow-md transition">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h2 className="text-lg font-semibold">{job.title}</h2>
+                  <p className="text-sm text-gray-500">{job.location || 'N/A'}</p>
+                  <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium ${
+                    job.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {job.isActive ? 'Active' : 'Closed'}
+                  </span>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+  <button
+    onClick={() => navigate(`/employer/applicants/${job._id}`)}
+    className="text-blue-600 hover:bg-blue-50 border border-blue-100 rounded px-2 py-0.5 text-xs font-medium transition"
+    title="View Applicants"
+  >
+    View
+  </button>
+  <button
+    onClick={() => handleStop(job._id)}
+    disabled={!job.isActive}
+    className={`text-yellow-600 hover:bg-yellow-50 border border-yellow-100 rounded px-2 py-0.5 text-xs font-medium transition ${
+      !job.isActive ? 'opacity-50 cursor-not-allowed' : ''
+    }`}
+    title="Stop Applications"
+  >
+    Stop
+  </button>
+  <button
+    onClick={() => navigate(`/employer/edit-job/${job._id}`)}
+    className="text-green-600 hover:bg-green-50 border border-green-100 rounded px-2 py-0.5 text-xs font-medium transition"
+    title="Edit Job"
+  >
+    Edit
+  </button>
+  <button
+    onClick={() => handleDelete(job._id)}
+    className="text-red-600 hover:bg-red-50 border border-red-100 rounded px-2 py-0.5 text-xs font-medium transition"
+    title="Delete Job"
+  >
+    Delete
+  </button>
+</div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

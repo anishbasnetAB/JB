@@ -25,13 +25,14 @@ function Signup() {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: { userType: 'jobseeker' },
+    defaultValues: { userType: 'jobseeker', acceptTerms: true },
   });
 
   const userType = watch('userType');
   const [fileName, setFileName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
@@ -49,17 +50,17 @@ function Signup() {
       });
 
       if (res.status === 201) {
-        alert(res.data?.message || 'Signup successful!');
-        navigate('/login');
+        setMessage({ text: res.data?.message || 'Signup successful!', type: 'success' });
+        setTimeout(() => navigate('/login'), 1500);
       } else {
-        alert(res.data?.message || 'Signup failed');
+        setMessage({ text: res.data?.message || 'Signup failed', type: 'error' });
       }
     } catch (err) {
       console.error('Signup Error:', err);
       const msg =
         err?.response?.data?.message ||
         (err.request ? 'Network Error: Could not reach server.' : 'Unexpected error');
-      alert(msg);
+      setMessage({ text: msg, type: 'error' });
     }
   };
 
@@ -254,7 +255,7 @@ function Signup() {
             name="acceptTerms"
             control={control}
             render={({ field }) => (
-              <input type="checkbox" {...field} className="w-4 h-4" />
+              <input type="checkbox" {...field} checked={field.value} className="w-4 h-4" />
             )}
           />
           <span className="text-sm">I accept the Terms and Conditions</span>
@@ -268,6 +269,16 @@ function Signup() {
         >
           {isSubmitting ? 'Submitting…' : 'Sign Up'}
         </button>
+
+        {message.text && (
+          <div
+            className={`mt-2 text-center text-sm font-medium py-2 rounded ${
+              message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
 
         <p className="text-center text-sm text-gray-500">
           Already have an account?{' '}

@@ -3,18 +3,39 @@ import axios from '../../api/axios';
 
 const CreateBlog = () => {
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [images, setImages] = useState([]);
+  const [paragraphs, setParagraphs] = useState(['']);
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+
+  const handleParagraphChange = (index, value) => {
+    const updated = [...paragraphs];
+    updated[index] = value;
+    setParagraphs(updated);
+  };
+
+  const addParagraph = () => {
+    setParagraphs([...paragraphs, '']);
+  };
+
+  const removeParagraph = (index) => {
+    setParagraphs(paragraphs.filter((_, i) => i !== index));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
       formData.append('title', title);
-      formData.append('content', content);
-      for (let img of images) {
-        formData.append('images', img);
-      }
+      formData.append('content', JSON.stringify(paragraphs));
+      if (image) formData.append('images', image);
 
       await axios.post('/blogs', formData, {
         headers: {
@@ -24,8 +45,9 @@ const CreateBlog = () => {
 
       alert('Blog created!');
       setTitle('');
-      setContent('');
-      setImages([]);
+      setParagraphs(['']);
+      setImage(null);
+      setImagePreview('');
     } catch (err) {
       console.error(err);
       alert('Failed to create blog');
@@ -43,34 +65,65 @@ const CreateBlog = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full border border-gray-300 rounded p-2 text-sm"
+            required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Content</label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={4}
-            className="w-full border border-gray-300 rounded p-2 text-sm"
-          />
+          <label className="block text-sm font-medium mb-1">Paragraphs</label>
+          {paragraphs.map((para, index) => (
+            <div key={index} className="mb-2 relative">
+              <textarea
+                value={para}
+                onChange={(e) => handleParagraphChange(index, e.target.value)}
+                rows={3}
+                className="w-full border border-gray-300 rounded p-2 text-sm"
+                placeholder={`Paragraph ${index + 1}`}
+                required
+              />
+              {paragraphs.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeParagraph(index)}
+                  className="absolute top-1 right-1 text-red-500 text-xs hover:underline"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addParagraph}
+            className="text-blue-600 text-sm hover:underline mt-1"
+          >
+            + Add Paragraph
+          </button>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Upload Images</label>
+          <label className="block text-sm font-medium mb-1">Upload Image</label>
           <input
             type="file"
-            multiple
-            onChange={(e) => setImages([...e.target.files])}
+            accept="image/*"
+            onChange={handleImageChange}
             className="block"
           />
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="mt-2 border rounded object-cover"
+              style={{ width: '100%', maxWidth: '400px', height: '250px' }}
+            />
+          )}
         </div>
 
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          Create
+          Create Blog
         </button>
       </form>
     </div>

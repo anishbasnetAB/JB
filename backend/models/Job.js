@@ -1,3 +1,4 @@
+// models/Job.js
 const mongoose = require('mongoose');
 
 const jobSchema = new mongoose.Schema({
@@ -10,6 +11,8 @@ const jobSchema = new mongoose.Schema({
   description: { type: String },
   deadline: { type: Date },
   isActive: { type: Boolean, default: true },
+  responsibilities: [{ type: String }],
+  requirements: [{ type: String }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Job', jobSchema);
