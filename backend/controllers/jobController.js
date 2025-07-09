@@ -1,5 +1,5 @@
-// controllers/jobController.js
 const Job = require('../models/Job');
+const redis = require('../redisClient');
 
 exports.createJob = async (req, res) => {
   try {
@@ -11,6 +11,7 @@ exports.createJob = async (req, res) => {
       employer: req.user.userId,
     });
     await job.save();
+    await redis.del('jobs:active'); // Invalidate cache
     res.status(201).json({ message: 'Job created successfully', job });
   } catch (err) {
     console.error(err);
@@ -49,6 +50,8 @@ exports.updateJob = async (req, res) => {
       { new: true }
     );
     if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    await redis.del('jobs:active'); // Invalidate cache
     res.status(200).json({ message: 'Job updated successfully', job });
   } catch (err) {
     console.error(err);
@@ -60,6 +63,8 @@ exports.deleteJob = async (req, res) => {
   try {
     const job = await Job.findOneAndDelete({ _id: req.params.id, employer: req.user.userId });
     if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    await redis.del('jobs:active'); // Invalidate cache
     res.status(200).json({ message: 'Job deleted successfully' });
   } catch (err) {
     console.error(err);
@@ -75,6 +80,8 @@ exports.stopApplications = async (req, res) => {
       { new: true }
     );
     if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    await redis.del('jobs:active'); // Invalidate cache
     res.status(200).json({ message: 'Applications stopped', job });
   } catch (err) {
     console.error(err);
@@ -83,8 +90,20 @@ exports.stopApplications = async (req, res) => {
 };
 
 exports.getAllActiveJobs = async (req, res) => {
+  const cacheKey = 'jobs:active';
+
   try {
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      console.log('Serving from Redis cache');
+      return res.status(200).json(JSON.parse(cached));
+    }
+
     const jobs = await Job.find({ isActive: true });
+
+    await redis.set(cacheKey, JSON.stringify(jobs), 'EX', 60); // cache for 60 seconds
+    console.log('Serving from MongoDB');
+
     res.status(200).json(jobs);
   } catch (err) {
     console.error(err);
