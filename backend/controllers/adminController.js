@@ -65,7 +65,7 @@ const getAllEmployers = async (req, res) => {
   }
 };
 
-// ✅ Export all functions
+//  Export all functions
 module.exports = {
   deleteEmployer,
   deleteBlog,

@@ -10,7 +10,14 @@ const schema = yup.object({
   age: yup.number().typeError('Age must be a number').positive().integer().nullable(),
   country: yup.string().nullable(),
   email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup.string().min(8, 'Min 8 characters').required('Password is required'),
+ password: yup
+  .string()
+  .required('Password is required')
+  .min(8, 'Min 8 characters')
+  .matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+    'Password must contain at least 1 uppercase, 1 lowercase, and 1 number'
+  ),
   confirm: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match').required(),
   userType: yup.string().oneOf(['jobseeker', 'employer']).required('Select a role'),
   companyCard: yup.mixed().nullable(),
