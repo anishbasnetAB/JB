@@ -1,2 +1,7 @@
 docker run -d --name redis-server -p 6379:6379 redis
 docker ps
+start
+docker start redis-server
+
+docker restart redis-server
+docker stop redis-server

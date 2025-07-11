@@ -22,6 +22,9 @@ import BlogDetail from './pages/Blog/BlogDetail';
 import CreateBlog from './pages/Blog/CreateBlog';
 import Profile from './pages/Profile';
 import { useAuth } from './context/AuthContext';
+import AdminEmployers from './pages/Admin/AdminEmployers';
+import AdminBlogs from './pages/Admin/AdminBlogs';
+import AdminJobs from './pages/Admin/AdminJobs';
 
 function App() {
   const { user } = useAuth();
@@ -112,6 +115,9 @@ function App() {
       <Route path="/blogs" element={<BlogList />} />
       <Route path="/blogs/:blogId" element={<BlogDetail />} />
       <Route path="/blogs/create" element={<CreateBlog />} />
+              <Route path="/admin/employers" element={<AdminEmployers />} />
+        <Route path="/admin/blogs" element={<AdminBlogs />} />
+        <Route path="/admin/jobs" element={<AdminJobs />} />
       <Route
         path="/dashboard"
         element={

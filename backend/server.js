@@ -1,4 +1,5 @@
 const express = require('express');
+const adminRoutes = require('./routes/admin');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -21,7 +22,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+app.use('/api/admin', adminRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/auth', authRoutes);

@@ -35,10 +35,14 @@ function Login() {
       setMessage({ text: res.data.message || 'Login successful', type: 'success' });
 
       setTimeout(() => {
-        if (user?.role === 'employer') {
+        if (user?.userType === 'admin') {
+          navigate('/admin/employers');
+        } else if (user?.userType === 'employer') {
           navigate('/employer/dashboard');
+        } else if (user?.userType === 'jobseeker') {
+          navigate('/jobs');
         } else {
-          navigate('/dashboard');
+          navigate('/');
         }
       }, 1500);
     } catch (err) {
